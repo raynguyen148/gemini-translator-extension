@@ -3,14 +3,15 @@ const POPOVER_ID = "gemini-translator-popover-btn";
 const MODAL_ID   = "gemini-translator-modal-container";
 
 // Inline SVG icons
-const POPOVER_SVG = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M1 4.5H10M10 4.5L7.5 2M10 4.5L7.5 7" stroke="#1a73e8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M13 9.5H4M4 9.5L6.5 7M4 9.5L6.5 12" stroke="#1a73e8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+const POPOVER_SVG = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <rect x="1" y="1" width="22" height="22" rx="6" fill="#2457C5"/>
+  <path d="M4.25 7L10 18L15.75 7" stroke="white" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M19 3C19.45 4.65 20.35 5.55 22 6C20.35 6.45 19.45 7.35 19 9C18.55 7.35 17.65 6.45 16 6C17.65 5.55 18.55 4.65 19 3Z" fill="white"/>
 </svg>`;
 
 const HEADER_SVG = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M1 4.5H10M10 4.5L7.5 2M10 4.5L7.5 7" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M13 9.5H4M4 9.5L6.5 7M4 9.5L6.5 12" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M2 6L5.5 12L9 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12 1C12.3 2.1 12.9 2.7 14 3C12.9 3.3 12.3 3.9 12 5C11.7 3.9 11.1 3.3 10 3C11.1 2.7 11.7 2.1 12 1Z" fill="white"/>
 </svg>`;
 
 const PIN_SVG = `<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
