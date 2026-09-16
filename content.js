@@ -3,7 +3,7 @@ const POPOVER_ID = "gemini-translator-popover-btn";
 const MODAL_ID   = "gemini-translator-modal-container";
 
 // Inline SVG icons
-const POPOVER_SVG = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+const POPOVER_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <line x1="3.5" y1="4.5" x2="11.5" y2="20.5" stroke="#1557b0" stroke-width="3.5" stroke-linecap="round"/>
   <line x1="12" y1="20.5" x2="16.8" y2="9.5" stroke="#1a73e8" stroke-width="3.5" stroke-linecap="round"/>
   <path d="M19 0.8C19.3 3.1 20.4 4.2 22.8 4.6C20.4 5.0 19.3 6.1 19 8.4C18.7 6.1 17.6 5.0 15.2 4.6C17.6 4.2 18.7 3.1 19 0.8Z" fill="#1a73e8"/>
@@ -87,8 +87,8 @@ function showPopover(x, y) {
     });
     document.body.appendChild(btn);
   }
-  btn.style.left = `${x + 10}px`;
-  btn.style.top  = `${y + 10}px`;
+  btn.style.left = `${x + 6}px`;
+  btn.style.top  = `${y + 6}px`;
   btn.style.display = "flex";
 }
 
