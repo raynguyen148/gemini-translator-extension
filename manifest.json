@@ -24,7 +24,8 @@
     "open_in_tab": false
   },
   "action": {
-    "default_title": "Gemini Translator Settings",
+    "default_title": "Gemini Translator",
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "icon16.png",
       "48": "icon48.png",
