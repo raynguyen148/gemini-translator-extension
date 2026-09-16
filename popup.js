@@ -99,7 +99,8 @@ speakBtn.addEventListener("click", () => {
     speakBtn.classList.remove("copied");
   } else {
     const utt = new SpeechSynthesisUtterance(lastResult);
-    utt.lang = "vi-VN";
+    const isVietnamese = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(lastResult);
+    utt.lang = isVietnamese ? "vi-VN" : "en-US";
     utt.onend = utt.onerror = () => {
       isSpeaking = false;
       speakBtn.innerHTML = `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="2 5 6 5 10 2 10 14 6 11 2 11 2 5"></polygon><path d="M13 5.5a5 5 0 0 1 0 5"></path></svg> Listen`;

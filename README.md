@@ -1,6 +1,6 @@
 # Gemini Translator — Chrome Extension
 
-> Instant, context-aware English-to-Vietnamese translation right in your browser, powered by the Google Gemini API.
+> Instant, context-aware, bidirectional English ⇄ Vietnamese translation right in your browser, powered by the Google Gemini API.
 
 ![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?style=flat&logo=googlechrome&logoColor=white)
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-green?style=flat)
@@ -13,7 +13,8 @@
 
 | Feature | Description |
 |---|---|
-| **Highlight & Translate** | Select any English text on any webpage → click the floating action button → view instant translation |
+| **Highlight & Translate** | Select text on any webpage → click the floating action button → view instant translation |
+| **Bidirectional (Auto-detect)** | Automatically detects if the input is English or Vietnamese and translates to the opposite language |
 | **Toolbar Popup** | Click the extension icon in the toolbar to paste/type text directly (ideal for Google Docs, Notion, or canvas-based apps) |
 | **Right-Click Menu** | Translate selections via the browser context menu (*Right click → "Dịch với Gemini"*) |
 | **Markdown Rendering** | Native, zero-dependency Markdown parser that renders headings, lists, code blocks, bold/italics, and blockquotes |

@@ -65,7 +65,14 @@ async function handleTranslation(text) {
                     body: JSON.stringify({
                         contents: [{
                             parts: [{
-                                text: `Bạn là một chuyên gia dịch thuật. Dịch đoạn văn bản tiếng Anh sau sang tiếng Việt một cách tự nhiên và chính xác. Trả về DUY NHẤT nội dung đã dịch, không giải thích thêm. Nếu văn bản gốc có định dạng Markdown (tiêu đề #, danh sách -, code, in đậm **), hãy GIỮ NGUYÊN cấu trúc Markdown đó trong bản dịch.
+                                text: `Bạn là một chuyên gia dịch thuật song ngữ Anh - Việt. Nhiệm vụ của bạn là tự động nhận diện ngôn ngữ chủ đạo (dominant language) của đoạn văn bản đầu vào:
+- Nếu ngôn ngữ chủ đạo là tiếng Anh: Dịch toàn bộ sang tiếng Việt.
+- Nếu ngôn ngữ chủ đạo là tiếng Việt (kể cả có chèn thuật ngữ tiếng Anh): Dịch toàn bộ sang tiếng Anh.
+
+Yêu cầu nghiêm ngặt:
+1. Trả về DUY NHẤT nội dung đã dịch, TUYỆT ĐỐI KHÔNG giải thích thêm.
+2. Giữ nguyên (không dịch) các thuật ngữ chuyên ngành IT / tên riêng nếu việc dịch làm mất đi ý nghĩa gốc (ví dụ: Promise, Component, React...).
+3. Nếu văn bản gốc có cấu trúc Markdown (tiêu đề #, danh sách -, code, in đậm **), hãy GIỮ NGUYÊN cấu trúc đó trong bản dịch.
 
 Đoạn văn bản: ${text}`
                             }]

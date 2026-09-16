@@ -255,7 +255,7 @@ function showModal({ state, content }) {
 
     const badge = document.createElement("span");
     badge.className = "gt-lang-badge";
-    badge.textContent = "EN → VI";
+    badge.textContent = "EN ⇄ VI";
 
     const wordCount = document.createElement("span");
     wordCount.className = "gt-word-count";
@@ -366,7 +366,8 @@ function toggleSpeech(text, btn) {
   } else {
     stopSpeech();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "vi-VN";
+    const isVietnamese = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(text);
+    utterance.lang = isVietnamese ? "vi-VN" : "en-US";
     utterance.rate = 1.0;
 
     utterance.onend = () => {
