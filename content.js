@@ -3,16 +3,16 @@ const POPOVER_ID = "gemini-translator-popover-btn";
 const MODAL_ID   = "gemini-translator-modal-container";
 
 // Inline SVG icons
-const POPOVER_SVG = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <line x1="4.5" y1="5.5" x2="12" y2="20" stroke="#1557b0" stroke-width="3" stroke-linecap="round"/>
-  <line x1="12" y1="20" x2="16.5" y2="10.5" stroke="#1a73e8" stroke-width="3" stroke-linecap="round"/>
-  <path d="M19.5 1.5C19.8 3.3 20.7 4.2 22.5 4.5C20.7 4.8 19.8 5.7 19.5 7.5C19.2 5.7 18.3 4.8 16.5 4.5C18.3 4.2 19.2 3.3 19.5 1.5Z" fill="#1a73e8"/>
+const POPOVER_SVG = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <line x1="3.5" y1="4.5" x2="11.5" y2="20.5" stroke="#1557b0" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="12" y1="20.5" x2="16.8" y2="9.5" stroke="#1a73e8" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M19 0.8C19.3 3.1 20.4 4.2 22.8 4.6C20.4 5.0 19.3 6.1 19 8.4C18.7 6.1 17.6 5.0 15.2 4.6C17.6 4.2 18.7 3.1 19 0.8Z" fill="#1a73e8"/>
 </svg>`;
 
-const HEADER_SVG = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <line x1="2.5" y1="3" x2="6.8" y2="11.5" stroke="rgba(255,255,255,0.72)" stroke-width="1.8" stroke-linecap="round"/>
-  <line x1="6.8" y1="11.5" x2="9.5" y2="6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-  <path d="M11.5 1C11.7 2.1 12.2 2.6 13.3 2.8C12.2 3 11.7 3.5 11.5 4.6C11.3 3.5 10.8 3 9.7 2.8C10.8 2.6 11.3 2.1 11.5 1Z" fill="white"/>
+const HEADER_SVG = `<svg width="15" height="15" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <line x1="2" y1="2.2" x2="6.6" y2="12" stroke="rgba(255,255,255,0.75)" stroke-width="2.1" stroke-linecap="round"/>
+  <line x1="6.8" y1="12" x2="10" y2="5.5" stroke="white" stroke-width="2.1" stroke-linecap="round"/>
+  <path d="M11.5 0.5C11.7 1.8 12.3 2.4 13.6 2.6C12.3 2.8 11.7 3.4 11.5 4.7C11.3 3.4 10.7 2.8 9.4 2.6C10.7 2.4 11.3 1.8 11.5 0.5Z" fill="white"/>
 </svg>`;
 
 const PIN_SVG = `<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
