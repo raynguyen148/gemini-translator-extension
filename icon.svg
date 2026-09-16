@@ -1,10 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
-  <!-- A flat, high-contrast silhouette stays readable in a browser toolbar. -->
-  <rect x="4" y="4" width="120" height="120" rx="30" fill="#2457C5"/>
-
-  <!-- Vietnamese cue: one bold V keeps the mark direct and legible at 16px. -->
-  <path d="M24 39L55 94L86 39" stroke="white" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
-
-  <!-- White Gemini-style four-point sparkle. -->
-  <path d="M101 17C102.8 23.6 106.4 27.2 113 29C106.4 30.8 102.8 34.4 101 41C99.2 34.4 95.6 30.8 89 29C95.6 27.2 99.2 23.6 101 17Z" fill="white"/>
+  <!-- Left arm (Dark Google Blue #1557b0) -->
+  <line x1="14" y1="23" x2="54.5" y2="101" stroke="#1557b0" stroke-width="19" stroke-linecap="round"/>
+  <!-- Right arm (Vibrant Google Blue #1a73e8) -->
+  <line x1="60.5" y1="111" x2="86" y2="51.75" stroke="#1a73e8" stroke-width="19" stroke-linecap="round"/>
+  <!-- Gemini Star (Upper right radiant 4-point star) -->
+  <path d="M 98.5 1.00
+C 100.30 24.37 103.63 27.70 127.00 29.5
+C 103.63 31.30 100.30 34.63 98.5 58.00
+C 96.70 34.63 93.37 31.30 70.00 29.5
+C 93.37 27.70 96.70 24.37 98.5 1.00
+Z" fill="#1a73e8"/>
 </svg>
