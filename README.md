@@ -1,6 +1,6 @@
 # Gemini Translator — Chrome Extension
 
-> Dịch thuật Anh → Việt tức thì ngay trên trình duyệt, powered by Google Gemini API.
+> Instant, context-aware English-to-Vietnamese translation right in your browser, powered by the Google Gemini API.
 
 ![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?style=flat&logo=googlechrome&logoColor=white)
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-green?style=flat)
@@ -9,138 +9,133 @@
 
 ---
 
-## Tính năng
+## Features
 
-| Tính năng | Mô tả |
+| Feature | Description |
 |---|---|
-| **Bôi đen → dịch ngay** | Bôi đen bất kỳ đoạn văn bản nào → bấm icon mũi tên nhỏ xuất hiện → xem bản dịch ngay lập tức |
-| **Menu chuột phải** | Hỗ trợ dịch qua Context Menu (chuột phải → "Dịch với Gemini") |
-| **Render Markdown** | Tự động nhận diện và render cấu trúc Markdown trong bản dịch (heading, list, code block, blockquote…) |
-| **Kéo thả popup** | Nhấn giữ tiêu đề popup để kéo đến bất kỳ vị trí nào trên màn hình |
-| **Ghim popup** | Ghim popup luôn hiển thị khi thao tác trên trang web bên dưới |
-| **Mở rộng chiều rộng** | Toggle mở rộng popup từ 480px lên 680px để đọc nội dung dài thoải mái |
-| **Sao chép một chạm** | Nút sao chép kèm feedback animation trực tiếp |
-| **Phát âm (TTS)** | Nghe đọc bản dịch tiếng Việt qua Web Speech API |
-| **Đếm từ** | Hiển thị ước lượng số từ của bản dịch |
-| **Fallback model** | Tự động thử model dự phòng khi model chính bị quá tải (HTTP 503/429) |
-| **Zero dependency** | Không dùng bất kỳ thư viện nào — Markdown renderer được viết thuần JS |
+| **Highlight & Translate** | Select any English text on any webpage → click the floating action button → view instant translation |
+| **Toolbar Popup** | Click the extension icon in the toolbar to paste/type text directly (ideal for Google Docs, Notion, or canvas-based apps) |
+| **Right-Click Menu** | Translate selections via the browser context menu (*Right click → "Dịch với Gemini"*) |
+| **Markdown Rendering** | Native, zero-dependency Markdown parser that renders headings, lists, code blocks, bold/italics, and blockquotes |
+| **Draggable Modal** | Click and drag the modal header to reposition it anywhere on the screen |
+| **Pin Mode** | Pin the translation popup to keep reading while interacting with the webpage underneath |
+| **Expandable Width** | Toggle between default (480px) and wide view (680px) for reading lengthy technical articles and PR descriptions |
+| **Text-to-Speech (TTS)** | Listen to the Vietnamese pronunciation of the translated text via the Web Speech API |
+| **One-Click Copy** | Fast copy button with tactile visual feedback |
+| **Word Count** | Displays an estimated word count for translated text |
+| **Automatic Fallback** | Gracefully falls back to lighter models if the primary model encounters rate limits or overload (HTTP 503/429) |
+| **Zero Dependencies** | Pure vanilla JavaScript and modern CSS with zero external libraries or bundle build steps |
 
 ---
 
-## Giao diện
+## Design System
 
-- **Modern Minimal** — nền trắng, viền 1px, shadow nhẹ
-- **Anchor color:** `#1a73e8` (Google Blue)
-- **Popup:** Góc dưới phải màn hình, có thể kéo thả và ghim
-- **Scrollbar** mỏng (6px), tự ẩn khi không dùng
-- **Responsive:** Tự giới hạn `max-height: 100vh - 60px`, hỗ trợ scroll nội dung dài
+- **Modern Minimal:** Clean surfaces, subtle 1px border lines, balanced elevation shadows.
+- **Anchor Color:** Google Blue (`#1a73e8`) used strictly as the primary interactive hue.
+- **Typography:** Tuned line heights and font pairings optimized for extended reading.
+- **Sleek Custom Scrollbar:** 5px subtle scrollbar that blends seamlessly with the UI.
 
 ---
 
-## Cài đặt thủ công (Developer Mode)
+## Installation (Developer Mode)
 
-> Extension chưa được publish lên Chrome Web Store. Cài theo hướng dẫn dưới đây.
-
-### Bước 1 — Clone repo
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/gemini-translator-extension.git
 ```
 
-### Bước 2 — Load vào Chrome
+### 2. Load into Chrome
 
-1. Mở Chrome, truy cập `chrome://extensions/`
-2. Bật **Developer mode** (góc trên phải)
-3. Bấm **Load unpacked**
-4. Chọn thư mục vừa clone
+1. Open Google Chrome and navigate to `chrome://extensions/`.
+2. Toggle on **Developer mode** in the top-right corner.
+3. Click **Load unpacked**.
+4. Select the `gemini-translator-extension` directory.
 
-### Bước 3 — Lấy Gemini API Key
+### 3. Obtain a Gemini API Key
 
-1. Truy cập [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Tạo API Key mới (miễn phí)
+1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey).
+2. Create or copy your free Gemini API key.
 
-### Bước 4 — Cấu hình extension
+### 4. Configure Extension Settings
 
-1. Bấm icon extension trên Chrome toolbar → **Options**
-2. Nhập API Key vào ô **Gemini API Key**
-3. Chọn model (mặc định: `gemini-3.8-flash`)
-4. Bấm **Lưu cài đặt**
+1. Click the extension icon in your Chrome toolbar → click the **Settings (⚙)** button in the top right (or open extension options directly).
+2. Paste your API Key into the **Gemini API Key** field.
+3. Select your preferred model (default: `gemini-3.8-flash`).
+4. Click **Save Settings**.
 
 ---
 
-## Sử dụng
+## How to Use
 
-### Cách 1: Bôi đen + click icon
+### Method 1: Inline Selection
+1. Highlight any English text on a webpage.
+2. Click the floating translation icon that appears near your cursor.
+3. The translation modal will open in the bottom-right corner.
 
-1. Bôi đen bất kỳ đoạn chữ tiếng Anh nào trên trang
-2. Bấm vào icon mũi tên xanh xuất hiện gần con trỏ
-3. Bản dịch hiện ra trong popup
+### Method 2: Toolbar Popup (Recommended for Google Docs / Web Apps)
+1. Click the Gemini Translator icon in the Chrome toolbar.
+2. Paste or type text into the input box.
+3. Press **`Cmd + Enter`** (Mac) or **`Ctrl + Enter`** (Windows/Linux), or click **Translate**.
 
-### Cách 2: Menu chuột phải
+### Method 3: Context Menu
+1. Highlight text anywhere on the page.
+2. Right-click and choose **Dịch với Gemini**.
 
-1. Bôi đen đoạn chữ
-2. Chuột phải → **Dịch với Gemini**
+### Keyboard Shortcuts
 
-### Phím tắt
-
-| Phím | Hành động |
+| Shortcut | Action |
 |---|---|
-| `Esc` | Đóng popup |
+| `Cmd + Enter` / `Ctrl + Enter` | Translate input in toolbar popup |
+| `Esc` | Close translation modal |
 
 ---
 
-## Cấu trúc file
+## Project Structure
 
 ```
 gemini-translator-extension/
-├── manifest.json      # Cấu hình extension (MV3)
-├── background.js      # Service worker — gọi Gemini API, xử lý fallback
-├── content.js         # UI logic — popup, modal, drag, TTS, Markdown renderer
-├── styles.css         # Toàn bộ CSS của extension
-├── options.html       # Trang cài đặt
-├── options.js         # Logic lưu/đọc settings từ chrome.storage
-├── icon16.png         # Icon 16×16
-├── icon48.png         # Icon 48×48
-└── icon128.png        # Icon 128×128
+├── manifest.json      # Extension configuration (Manifest V3)
+├── background.js      # Background service worker (API dispatch & fallback logic)
+├── content.js         # Content script (in-page popup, modal, drag & drop, TTS, Markdown parser)
+├── popup.html         # Toolbar quick-translation popup interface
+├── popup.js           # Logic and interactions for toolbar popup
+├── options.html       # Extension configuration page
+├── options.js         # Settings management with chrome.storage.local
+├── styles.css         # Complete stylesheet for in-page overlays and components
+├── icon.svg           # Vector source logo
+├── icon16.png         # 16x16 icon
+├── icon48.png         # 48x48 icon
+└── icon128.png        # 128x128 icon
 ```
 
 ---
 
-## Models được hỗ trợ (2026)
+## Supported Models
 
-Extension tự động thử fallback theo thứ tự nếu model chính bị quá tải:
+The extension includes automated fallback handling across current Gemini generations:
 
-| Model | Ghi chú |
-|---|---|
-| `gemini-3.8-flash` | **Mặc định** — nhanh, ổn định |
-| `gemini-3.5-flash` | Cân bằng tốc độ/chất lượng |
-| `gemini-3.5-flash-lite` | Nhẹ nhất, ít bị quá tải nhất |
-
----
-
-## Công nghệ
-
-- **Chrome Extension Manifest V3**
-- **Gemini API** (`v1beta/models/{model}:generateContent`)
-- **Web Speech API** (Text-to-Speech)
-- **Vanilla JS** — không framework, không build step
-- **Markdown renderer** tự viết thuần JS
+| Model | Status | Characteristics |
+|---|---|---|
+| `gemini-3.8-flash` | **Default** | Fast, reliable, and optimized for everyday tasks |
+| `gemini-3.5-flash` | Supported | Well-balanced speed and output depth |
+| `gemini-3.5-flash-lite` | Supported | Ultra-low latency, highly resistant to traffic spikes |
 
 ---
 
-## Quyền truy cập (Permissions)
+## Permissions
 
-| Permission | Lý do |
+| Permission | Purpose |
 |---|---|
-| `contextMenus` | Thêm mục "Dịch với Gemini" vào menu chuột phải |
-| `storage` | Lưu API Key và tên model |
-| `activeTab` | Inject UI vào tab hiện tại |
-| `scripting` | Chạy content script |
+| `contextMenus` | Adds the right-click "Dịch với Gemini" context option |
+| `storage` | Securely persists your API key and model selection locally |
+| `activeTab` | Injects translation results into the currently active tab |
+| `scripting` | Executes UI components within web pages |
 
-> Extension **không thu thập dữ liệu**, không gửi dữ liệu về bất kỳ server nào ngoài Google Gemini API.
+> **Privacy Notice:** This extension operates entirely client-side. Your text and API key are transmitted directly to the official Google Gemini API and are never routed through any third-party intermediate servers.
 
 ---
 
 ## License
 
-MIT © 2026
+MIT License © 2026
