@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.getElementById('saveBtn').addEventListener('click', () => {
   const apiKey    = document.getElementById('apiKey').value.trim();
-  const modelName = document.getElementById('modelName').value.trim() || 'gemini-3.8-flash';
+  const modelName = document.getElementById('modelName').value.trim() || 'gemini-3.5-flash-lite';
 
   chrome.storage.local.set({ apiKey, modelName }, () => {
     const status = document.getElementById('status');

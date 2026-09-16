@@ -37,15 +37,14 @@ async function handleTranslation(text) {
     try {
         const data = await chrome.storage.local.get(["apiKey", "modelName"]);
         const apiKey = data.apiKey;
-        const primaryModel = data.modelName || "gemini-3.8-flash";
+        const primaryModel = data.modelName || "gemini-3.5-flash-lite";
         
         if (!apiKey) {
             return { error: "Vui lòng cấu hình Gemini API Key trong phần Cài đặt (Options) của Extension." };
         }
 
-        // Danh sách các model để thử (nếu primaryModel bị quá tải)
-        // Cập nhật 2026: Dùng các model thế hệ 3.x mới nhất (các bản 1.5/2.0 đã ngừng hoạt động)
-        const fallbackModels = ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-3.5-flash"];
+        // Danh sách các model để thử (ưu tiên lite vì tốc độ)
+        const fallbackModels = ["gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-3.5-flash"];
         let modelsToTry = [primaryModel];
         
         // Chỉ thêm fallback nếu primary model không nằm trong danh sách fallback
@@ -78,7 +77,10 @@ Yêu cầu nghiêm ngặt:
                             }]
                         }],
                         generationConfig: {
-                            temperature: 0.3 // Độ sáng tạo thấp để bám sát nghĩa gốc
+                            temperature: 0.3, // Độ sáng tạo thấp để bám sát nghĩa gốc
+                            thinkingConfig: {
+                                thinkingLevel: "low" // Áp dụng mức suy luận thấp cho mọi model để tối ưu tốc độ
+                            }
                         }
                     })
                 });

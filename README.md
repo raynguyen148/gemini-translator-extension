@@ -118,9 +118,9 @@ The extension includes automated fallback handling across current Gemini generat
 
 | Model | Status | Characteristics |
 |---|---|---|
-| `gemini-3.8-flash` | **Default** | Fast, reliable, and optimized for everyday tasks |
+| `gemini-3.5-flash-lite` | **Default** | Ultra-low latency, blazing fast speeds, highly resistant to traffic spikes |
+| `gemini-3.8-flash` | Supported | Highest translation quality, handles deep reasoning and complex formats |
 | `gemini-3.5-flash` | Supported | Well-balanced speed and output depth |
-| `gemini-3.5-flash-lite` | Supported | Ultra-low latency, highly resistant to traffic spikes |
 
 ---
 
