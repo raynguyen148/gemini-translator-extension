@@ -24,20 +24,58 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "TRANSLATE") {
         // Gọi hàm async và trả kết quả qua sendResponse
-        handleTranslation(request.text).then(sendResponse);
+        handleTranslation(request.text, request.direction).then(sendResponse);
         return true; // Phải return true để giữ kết nối mở cho xử lý bất đồng bộ (async)
     }
 });
+
+const VIETNAMESE_COMMON_WORDS = new Set([
+    "anh", "bạn", "các", "cho", "có", "của", "đã", "đang", "để", "được",
+    "không", "khi", "là", "một", "này", "nếu", "những", "sang", "sẽ", "thì",
+    "tôi", "trong", "từ", "và", "về", "việc", "với"
+]);
+
+const ENGLISH_COMMON_WORDS = new Set([
+    "a", "an", "and", "are", "as", "at", "be", "by", "can", "for", "from",
+    "has", "have", "if", "in", "is", "it", "not", "of", "on", "or", "should",
+    "that", "the", "this", "to", "was", "when", "will", "with"
+]);
+
+/**
+ * Chỉ chốt hướng dịch khi văn bản có tín hiệu ngôn ngữ đủ rõ.
+ * Đoạn ngắn hoặc pha trộn cân bằng sẽ giữ chế độ auto để Gemini xét ngữ cảnh.
+ */
+function detectTranslationDirection(text) {
+    const tokens = text.toLocaleLowerCase("vi").match(/\p{L}+/gu) || [];
+    const vietnameseCharacters = text.match(/[ăâđêôơưàáạảãầấậẩẫằắặẳẵèéẹẻẽềếệểễìíịỉĩòóọỏõồốộổỗờớợởỡùúụủũừứựửữỳýỵỷỹ]/gi) || [];
+    const vietnameseWordHits = tokens.filter(token => VIETNAMESE_COMMON_WORDS.has(token)).length;
+    const englishWordHits = tokens.filter(token => ENGLISH_COMMON_WORDS.has(token)).length;
+    const vietnameseScore = vietnameseCharacters.length + vietnameseWordHits * 2;
+    const englishScore = englishWordHits * 2;
+
+    if (vietnameseScore >= 3 && vietnameseScore >= englishScore * 1.5) {
+        return "vi-to-en";
+    }
+
+    if (englishScore >= 3 && englishScore >= vietnameseScore * 1.5) {
+        return "en-to-vi";
+    }
+
+    return "auto";
+}
 
 /**
  * Xử lý gọi API tới Gemini.
  * Chạy ở background để không bị dính lỗi CORS từ trang web.
  */
-async function handleTranslation(text) {
+async function handleTranslation(text, requestedDirection) {
     try {
         const data = await chrome.storage.local.get(["apiKey", "modelName"]);
         const apiKey = data.apiKey;
         const primaryModel = data.modelName || "gemini-3.5-flash-lite";
+        const direction = ["en-to-vi", "vi-to-en"].includes(requestedDirection)
+            ? requestedDirection
+            : detectTranslationDirection(text);
         
         if (!apiKey) {
             return { error: "Vui lòng cấu hình Gemini API Key trong phần Cài đặt (Options) của Extension." };
@@ -56,6 +94,19 @@ async function handleTranslation(text) {
 
         for (const model of modelsToTry) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+            const directionInstruction = direction === "en-to-vi"
+                ? `Hướng dịch bắt buộc: từ tiếng Anh sang tiếng Việt.
+- Bản dịch phải có ngôn ngữ chủ đạo là tiếng Việt.
+- Không tự đổi chiều dịch, kể cả khi văn bản có xen một số từ tiếng Việt.`
+                : direction === "vi-to-en"
+                    ? `Hướng dịch bắt buộc: từ tiếng Việt sang tiếng Anh.
+- Bản dịch phải có ngôn ngữ chủ đạo là tiếng Anh.
+- Không tự đổi chiều dịch, kể cả khi văn bản có xen thuật ngữ tiếng Anh.`
+                    : `Tự động nhận diện ngôn ngữ chủ đạo và ngữ cảnh của văn bản:
+- Nếu phần câu chữ tự nhiên chủ yếu là tiếng Anh: dịch toàn bộ sang tiếng Việt.
+- Nếu phần câu chữ tự nhiên chủ yếu là tiếng Việt: dịch toàn bộ sang tiếng Anh.
+- Không dùng tên riêng, code hoặc thuật ngữ chuyên ngành IT để quyết định ngôn ngữ chủ đạo.
+- Với văn bản pha trộn, ưu tiên ngôn ngữ của cấu trúc câu và ý chính.`;
             
             try {
                 const response = await fetch(url, {
@@ -64,9 +115,9 @@ async function handleTranslation(text) {
                     body: JSON.stringify({
                         contents: [{
                             parts: [{
-                                text: `Bạn là một chuyên gia dịch thuật song ngữ Anh - Việt. Nhiệm vụ của bạn là tự động nhận diện ngôn ngữ chủ đạo (dominant language) của đoạn văn bản đầu vào:
-- Nếu ngôn ngữ chủ đạo là tiếng Anh: Dịch toàn bộ sang tiếng Việt.
-- Nếu ngôn ngữ chủ đạo là tiếng Việt (kể cả có chèn thuật ngữ tiếng Anh): Dịch toàn bộ sang tiếng Anh.
+                                text: `Bạn là một chuyên gia dịch thuật song ngữ Anh - Việt.
+
+${directionInstruction}
 
 Yêu cầu nghiêm ngặt:
 1. Trả về DUY NHẤT nội dung đã dịch, TUYỆT ĐỐI KHÔNG giải thích thêm.

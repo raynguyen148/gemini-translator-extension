@@ -299,17 +299,44 @@
   gap: 8px;
 }
 
-.gt-lang-badge {
+.gt-direction-control {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: #1a73e8;
-  background: #e8f0fe;
-  padding: 2px 6px;
+  padding: 2px;
+  border: 1px solid #d2e3fc;
+  border-radius: 6px;
+  background: #f8faff;
+}
+
+.gt-direction-btn {
+  min-width: 52px;
+  padding: 3px 7px;
+  border: none;
   border-radius: 4px;
+  background: transparent;
+  color: #5f6368;
+  font-family: inherit;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  line-height: 1.35;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, box-shadow 0.12s;
+}
+
+.gt-direction-btn:hover {
+  color: #1a73e8;
+  background: #eef4ff;
+}
+
+.gt-direction-btn.active {
+  color: #ffffff;
+  background: #1a73e8;
+  box-shadow: 0 1px 2px rgba(26, 115, 232, 0.24);
+}
+
+.gt-direction-btn:focus-visible {
+  outline: 2px solid #1a73e8;
+  outline-offset: 1px;
 }
 
 .gt-word-count {

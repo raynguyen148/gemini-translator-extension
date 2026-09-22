@@ -47,6 +47,9 @@ const SPEAKER_STOP_SVG = `<svg width="12" height="12" viewBox="0 0 16 16" fill="
 let selectedText = "";
 let isPinned = false;
 let isSpeaking = false;
+let translationDirection = "auto";
+let currentSourceText = "";
+let activeTranslationRequest = 0;
 
 // ── 1. Bôi đen chữ → hiện Popover ─────────────────────────
 document.addEventListener("mouseup", (e) => {
@@ -79,11 +82,11 @@ function showPopover(x, y) {
     btn = document.createElement("button");
     btn.id = POPOVER_ID;
     btn.innerHTML = POPOVER_SVG;
-    btn.title = "Dịch sang tiếng Việt";
+    btn.title = getDirectionLabel("auto");
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       hidePopover();
-      processTranslation(selectedText);
+      processTranslation(selectedText, "auto");
     });
     document.body.appendChild(btn);
   }
@@ -101,31 +104,38 @@ function hidePopover() {
 chrome.runtime.onMessage.addListener((request) => {
   if (request.action === "TRIGGER_TRANSLATE") {
     hidePopover();
-    processTranslation(request.text);
+    processTranslation(request.text, "auto");
   }
 });
 
 // ── 4. Luồng dịch chính ────────────────────────────────────
-async function processTranslation(text) {
-  showModal({ state: "loading" });
+async function processTranslation(text, direction = "auto") {
+  currentSourceText = text;
+  translationDirection = direction;
+  const requestId = ++activeTranslationRequest;
+  showModal({ state: "loading", direction });
 
   try {
-    const response = await chrome.runtime.sendMessage({ action: "TRANSLATE", text });
+    const response = await chrome.runtime.sendMessage({ action: "TRANSLATE", text, direction });
+
+    // Người dùng có thể đổi chiều dịch khi request cũ vẫn đang chạy.
+    if (requestId !== activeTranslationRequest) return;
 
     if (chrome.runtime.lastError) throw new Error("Mất kết nối với Extension.");
 
     if (response.error) {
-      showModal({ state: "error", content: response.error });
+      showModal({ state: "error", content: response.error, direction });
     } else {
-      showModal({ state: "result", content: response.result });
+      showModal({ state: "result", content: response.result, direction });
     }
   } catch (error) {
-    showModal({ state: "error", content: `Đã xảy ra lỗi: ${error.message}` });
+    if (requestId !== activeTranslationRequest) return;
+    showModal({ state: "error", content: `Đã xảy ra lỗi: ${error.message}`, direction });
   }
 }
 
 // ── 5. Modal & Tương tác cao cấp ───────────────────────────
-function showModal({ state, content }) {
+function showModal({ state, content, direction = translationDirection }) {
   let modal = document.getElementById(MODAL_ID);
 
   if (!modal) {
@@ -239,9 +249,15 @@ function showModal({ state, content }) {
 
   // Reset
   body.className = "gt-body";
-  footer.style.display = "none";
   footer.innerHTML = "";
   stopSpeech();
+
+  const footerLeft = document.createElement("div");
+  footerLeft.className = "gt-footer-left";
+  footerLeft.appendChild(createDirectionControl(direction));
+
+  const footerRight = document.createElement("div");
+  footerRight.className = "gt-footer-right";
 
   if (state === "loading") {
     body.innerHTML = `<div class="gt-loading"><div class="gt-spinner"></div>Đang dịch với Gemini...</div>`;
@@ -251,26 +267,14 @@ function showModal({ state, content }) {
   } else if (state === "result") {
     body.innerHTML = renderMarkdown(content);
 
-    // Footer Left: Badge + Word count
-    const footerLeft = document.createElement("div");
-    footerLeft.className = "gt-footer-left";
-
-    const badge = document.createElement("span");
-    badge.className = "gt-lang-badge";
-    badge.textContent = "EN ⇄ VI";
-
     const wordCount = document.createElement("span");
     wordCount.className = "gt-word-count";
     const words = content.trim().split(/\s+/).filter(Boolean).length;
     wordCount.textContent = `~${words} từ`;
 
-    footerLeft.appendChild(badge);
     footerLeft.appendChild(wordCount);
 
     // Footer Right: Speak + Copy
-    const footerRight = document.createElement("div");
-    footerRight.className = "gt-footer-right";
-
     // Speak Button
     const speakBtn = document.createElement("button");
     speakBtn.className = "gt-action-btn";
@@ -298,12 +302,54 @@ function showModal({ state, content }) {
     footerRight.appendChild(speakBtn);
     footerRight.appendChild(copyBtn);
 
-    footer.appendChild(footerLeft);
-    footer.appendChild(footerRight);
-    footer.style.display = "flex";
   }
 
+  footer.appendChild(footerLeft);
+  footer.appendChild(footerRight);
+  footer.style.display = "flex";
+
   modal.style.display = "flex";
+}
+
+function createDirectionControl(activeDirection) {
+  const control = document.createElement("div");
+  control.className = "gt-direction-control";
+  control.setAttribute("role", "group");
+  control.setAttribute("aria-label", "Chọn hướng dịch");
+
+  [
+    { value: "auto", label: "Tự động", title: "Tự nhận biết ngôn ngữ và chọn chiều dịch" },
+    { value: "en-to-vi", label: "EN → VI", title: "Dịch từ tiếng Anh sang tiếng Việt" },
+    { value: "vi-to-en", label: "VI → EN", title: "Dịch từ tiếng Việt sang tiếng Anh" }
+  ].forEach(({ value, label, title }) => {
+    const button = document.createElement("button");
+    const isActive = value === activeDirection;
+    button.type = "button";
+    button.className = `gt-direction-btn${isActive ? " active" : ""}`;
+    button.textContent = label;
+    button.title = title;
+    button.setAttribute("aria-pressed", String(isActive));
+    button.addEventListener("click", () => setTranslationDirection(value));
+    control.appendChild(button);
+  });
+
+  return control;
+}
+
+function setTranslationDirection(direction) {
+  if (direction === translationDirection) return;
+
+  translationDirection = direction;
+
+  if (currentSourceText) {
+    processTranslation(currentSourceText, direction);
+  }
+}
+
+function getDirectionLabel(direction) {
+  if (direction === "vi-to-en") return "Dịch từ tiếng Việt sang tiếng Anh";
+  if (direction === "en-to-vi") return "Dịch từ tiếng Anh sang tiếng Việt";
+  return "Tự nhận biết ngôn ngữ và chọn chiều dịch";
 }
 
 // ── Kéo thả (Draggable) ───────────────────────────────────
