@@ -34,6 +34,41 @@
 
 /* ── Modal Container ── */
 #gemini-translator-modal-container {
+  --gt-accent: #1a73e8;
+  --gt-accent-soft: #e8f0fe;
+  --gt-accent-soft-hover: #eef4ff;
+  --gt-accent-border: #d2e3fc;
+  --gt-surface: #ffffff;
+  --gt-header-surface: #fafbff;
+  --gt-text: #1f2328;
+  --gt-title: #1f1f1f;
+  --gt-text-muted: #5f6368;
+  --gt-text-subtle: #80868b;
+  --gt-border: #e0e0e0;
+  --gt-divider: #f0f0f0;
+  --gt-footer-divider: #f6f6f6;
+  --gt-control-hover: #f1f3f4;
+  --gt-scrollbar: #dadce0;
+  --gt-scrollbar-hover: #bdc1c6;
+  --gt-code-surface: #f6f8fa;
+  --gt-code-border: #e8eaed;
+  --gt-inline-code-surface: #f0f4f8;
+  --gt-inline-code-border: #e4e7eb;
+  --gt-code-text: #c0392b;
+  --gt-quote-surface: #f0f5ff;
+  --gt-quote-text: #3c4043;
+  --gt-danger: #c5221f;
+  --gt-spinner-track: #e0e0e0;
+  --gt-success: #188038;
+  --gt-success-border: #ceead6;
+  --gt-success-surface: #e6f4ea;
+  --gt-overlay: rgba(0, 0, 0, 0.06);
+  --gt-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 16px 36px -4px rgba(0, 0, 0, 0.14),
+    0 0 0 1px rgba(26, 115, 232, 0.05);
+  --gt-pinned-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08),
+    0 20px 40px -4px rgba(0, 0, 0, 0.18),
+    0 0 0 2px var(--gt-accent);
   position: fixed;
   inset: 0;
   z-index: 2147483646;
@@ -44,11 +79,49 @@
   pointer-events: none;
 }
 
+#gemini-translator-modal-container[data-theme="dark"] {
+  --gt-accent: #8ab4f8;
+  --gt-accent-soft: #253b5c;
+  --gt-accent-soft-hover: #263d60;
+  --gt-accent-border: #3f5f8e;
+  --gt-surface: #1f2329;
+  --gt-header-surface: #252a31;
+  --gt-text: #e6edf3;
+  --gt-title: #f0f3f6;
+  --gt-text-muted: #b1bac4;
+  --gt-text-subtle: #8d96a0;
+  --gt-border: #3d444d;
+  --gt-divider: #343b44;
+  --gt-footer-divider: #343b44;
+  --gt-control-hover: #343b44;
+  --gt-scrollbar: #4a535e;
+  --gt-scrollbar-hover: #626c78;
+  --gt-code-surface: #161b22;
+  --gt-code-border: #3d444d;
+  --gt-inline-code-surface: #2a3038;
+  --gt-inline-code-border: #444c56;
+  --gt-code-text: #ff938a;
+  --gt-quote-surface: #1d304b;
+  --gt-quote-text: #c9d1d9;
+  --gt-danger: #ff938a;
+  --gt-spinner-track: #444c56;
+  --gt-success: #7ee787;
+  --gt-success-border: #347d39;
+  --gt-success-surface: #1c3a25;
+  --gt-overlay: rgba(0, 0, 0, 0.2);
+  --gt-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.35),
+    0 18px 42px -6px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(138, 180, 248, 0.1);
+  --gt-pinned-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.4),
+    0 20px 44px -6px rgba(0, 0, 0, 0.6),
+    0 0 0 2px var(--gt-accent);
+}
+
 /* ── Overlay (tap outside to close) ── */
 .gt-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.06);
+  background: var(--gt-overlay);
   pointer-events: all;
   animation: gt-fade-in 0.15s ease-out;
 }
@@ -58,13 +131,10 @@
   position: relative;
   z-index: 1;
   pointer-events: all;
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
+  background: var(--gt-surface);
+  border: 1px solid var(--gt-border);
   border-radius: 12px;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.05),
-    0 16px 36px -4px rgba(0, 0, 0, 0.14),
-    0 0 0 1px rgba(26, 115, 232, 0.05);
+  box-shadow: var(--gt-shadow);
   width: 480px;
   max-width: calc(100vw - 40px);
   max-height: calc(100vh - 60px);
@@ -81,10 +151,7 @@
 }
 
 .gt-box.is-pinned {
-  box-shadow:
-    0 4px 12px -2px rgba(0, 0, 0, 0.08),
-    0 20px 40px -4px rgba(0, 0, 0, 0.18),
-    0 0 0 2px #1a73e8;
+  box-shadow: var(--gt-pinned-shadow);
 }
 
 /* ── Header ── */
@@ -93,8 +160,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  border-bottom: 1px solid #f0f0f0;
-  background: #fafbff;
+  border-bottom: 1px solid var(--gt-divider);
+  background: var(--gt-header-surface);
   user-select: none;
   cursor: grab;
 }
@@ -124,7 +191,7 @@
 .gt-header strong {
   font-size: 13px;
   font-weight: 600;
-  color: #1f1f1f;
+  color: var(--gt-title);
   letter-spacing: -0.01em;
 }
 
@@ -144,19 +211,24 @@
   background: transparent;
   border-radius: 5px;
   cursor: pointer;
-  color: #5f6368;
+  color: var(--gt-text-muted);
   transition: background 0.12s, color 0.12s;
   padding: 0;
 }
 
 .gt-tool-btn:hover {
-  background: #f1f3f4;
-  color: #202124;
+  background: var(--gt-control-hover);
+  color: var(--gt-title);
 }
 
 .gt-tool-btn.active {
-  background: #e8f0fe;
-  color: #1a73e8;
+  background: var(--gt-accent-soft);
+  color: var(--gt-accent);
+}
+
+.gt-tool-btn:focus-visible {
+  outline: 2px solid var(--gt-accent);
+  outline-offset: 1px;
 }
 
 /* ── Body ── */
@@ -164,7 +236,7 @@
   padding: 16px 20px;
   font-size: 14.5px;
   line-height: 1.68;
-  color: #1f2328;
+  color: var(--gt-text);
   min-height: 48px;
   word-break: break-word;
   overflow-y: auto;
@@ -180,11 +252,11 @@
   background: transparent;
 }
 .gt-body::-webkit-scrollbar-thumb {
-  background: #dadce0;
+  background: var(--gt-scrollbar);
   border-radius: 4px;
 }
 .gt-body::-webkit-scrollbar-thumb:hover {
-  background: #bdc1c6;
+  background: var(--gt-scrollbar-hover);
 }
 
 /* ── Loading State ── */
@@ -192,7 +264,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #5f6368;
+  color: var(--gt-text-muted);
   font-size: 13px;
 }
 
@@ -206,7 +278,7 @@
 
 .gt-body h1, .gt-body h2, .gt-body h3 {
   font-weight: 700;
-  color: #1f2328;
+  color: var(--gt-text);
   margin: 12px 0 4px;
   line-height: 1.3;
   letter-spacing: -0.02em;
@@ -225,8 +297,8 @@
 }
 
 .gt-body pre {
-  background: #f6f8fa;
-  border: 1px solid #e8eaed;
+  background: var(--gt-code-surface);
+  border: 1px solid var(--gt-code-border);
   border-radius: 6px;
   padding: 10px 12px;
   margin: 8px 0;
@@ -239,44 +311,44 @@
   border: none;
   padding: 0;
   font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
-  color: #1f2328;
+  color: var(--gt-text);
 }
 
 .gt-body code {
   font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
   font-size: 12.5px;
-  background: #f0f4f8;
-  border: 1px solid #e4e7eb;
+  background: var(--gt-inline-code-surface);
+  border: 1px solid var(--gt-inline-code-border);
   padding: 1px 5px;
   border-radius: 4px;
-  color: #c0392b;
+  color: var(--gt-code-text);
 }
 
 .gt-body blockquote {
   margin: 6px 0;
   padding: 6px 12px;
-  border-left: 3px solid #1a73e8;
-  background: #f0f5ff;
+  border-left: 3px solid var(--gt-accent);
+  background: var(--gt-quote-surface);
   border-radius: 0 4px 4px 0;
-  color: #3c4043;
+  color: var(--gt-quote-text);
   font-style: italic;
 }
 
 .gt-body hr {
   border: none;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--gt-border);
   margin: 10px 0;
 }
 
-.gt-body strong { font-weight: 700; color: #1f2328; }
+.gt-body strong { font-weight: 700; color: var(--gt-text); }
 .gt-body em     { font-style: italic; }
-.gt-body del    { text-decoration: line-through; color: #80868b; }
+.gt-body del    { text-decoration: line-through; color: var(--gt-text-subtle); }
 
 .gt-spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid #e0e0e0;
-  border-top-color: #1a73e8;
+  border: 2px solid var(--gt-spinner-track);
+  border-top-color: var(--gt-accent);
   border-radius: 50%;
   animation: gt-spin 0.7s linear infinite;
   flex-shrink: 0;
@@ -289,8 +361,8 @@
   justify-content: space-between;
   padding: 10px 16px 12px;
   gap: 8px;
-  border-top: 1px solid #f6f6f6;
-  background: #ffffff;
+  border-top: 1px solid var(--gt-footer-divider);
+  background: var(--gt-surface);
 }
 
 .gt-footer-left {
@@ -303,9 +375,9 @@
   display: inline-flex;
   align-items: center;
   padding: 2px;
-  border: 1px solid #d2e3fc;
+  border: 1px solid var(--gt-accent-border);
   border-radius: 6px;
-  background: #f8faff;
+  background: var(--gt-header-surface);
 }
 
 .gt-direction-btn {
@@ -314,7 +386,7 @@
   border: none;
   border-radius: 4px;
   background: transparent;
-  color: #5f6368;
+  color: var(--gt-text-muted);
   font-family: inherit;
   font-size: 11px;
   font-weight: 600;
@@ -324,8 +396,8 @@
 }
 
 .gt-direction-btn:hover {
-  color: #1a73e8;
-  background: #eef4ff;
+  color: var(--gt-accent);
+  background: var(--gt-accent-soft-hover);
 }
 
 .gt-direction-btn.active {
@@ -335,13 +407,13 @@
 }
 
 .gt-direction-btn:focus-visible {
-  outline: 2px solid #1a73e8;
+  outline: 2px solid var(--gt-accent);
   outline-offset: 1px;
 }
 
 .gt-word-count {
   font-size: 11px;
-  color: #80868b;
+  color: var(--gt-text-subtle);
 }
 
 .gt-footer-right {
@@ -357,9 +429,9 @@
   padding: 4px 10px;
   font-size: 12px;
   font-weight: 500;
-  color: #5f6368;
+  color: var(--gt-text-muted);
   background: transparent;
-  border: 1px solid #dadce0;
+  border: 1px solid var(--gt-scrollbar);
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.12s, border-color 0.12s, color 0.12s;
@@ -367,30 +439,30 @@
 }
 
 .gt-action-btn:hover {
-  background: #f1f3f4;
-  color: #202124;
+  background: var(--gt-control-hover);
+  color: var(--gt-title);
 }
 
 .gt-action-btn.active {
-  color: #1a73e8;
-  border-color: #d2e3fc;
-  background: #e8f0fe;
+  color: var(--gt-accent);
+  border-color: var(--gt-accent-border);
+  background: var(--gt-accent-soft);
 }
 
 .gt-copy-btn {
-  color: #1a73e8;
-  border-color: #d2e3fc;
+  color: var(--gt-accent);
+  border-color: var(--gt-accent-border);
 }
 
 .gt-copy-btn:hover {
-  background: #e8f0fe;
-  border-color: #1a73e8;
+  background: var(--gt-accent-soft);
+  border-color: var(--gt-accent);
 }
 
 .gt-copy-btn.copied {
-  color: #188038;
-  border-color: #ceead6;
-  background: #e6f4ea;
+  color: var(--gt-success);
+  border-color: var(--gt-success-border);
+  background: var(--gt-success-surface);
 }
 
 .gt-overlay.is-pinned-overlay {
@@ -400,13 +472,13 @@
 
 /* ── Error State ── */
 .gt-body.is-error {
-  color: #c5221f;
+  color: var(--gt-danger);
 }
 
 .gt-error-hint {
   margin-top: 8px;
   font-size: 12px;
-  color: #80868b;
+  color: var(--gt-text-subtle);
 }
 
 /* ── Animations ── */

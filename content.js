@@ -1,6 +1,7 @@
 // ── Constants ──────────────────────────────────────────────
 const POPOVER_ID = "gemini-translator-popover-btn";
 const MODAL_ID   = "gemini-translator-modal-container";
+const THEME_STORAGE_KEY = "translationPopupTheme";
 
 // Inline SVG icons
 const POPOVER_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -35,6 +36,15 @@ const COLLAPSE_SVG = `<svg width="13" height="13" viewBox="0 0 16 16" fill="none
   <polyline points="1 10 6 10 6 15"/>
 </svg>`;
 
+const MOON_SVG = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M13.2 10.2A5.8 5.8 0 0 1 5.8 2.8a5.8 5.8 0 1 0 7.4 7.4z"/>
+</svg>`;
+
+const SUN_SVG = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <circle cx="8" cy="8" r="2.7"/>
+  <path d="M8 1v1.4M8 13.6V15M1 8h1.4M13.6 8H15M3.05 3.05l1 1M11.95 11.95l1 1M12.95 3.05l-1 1M4.05 11.95l-1 1"/>
+</svg>`;
+
 const SPEAKER_SVG = `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
   <polygon points="2 5 6 5 10 2 10 14 6 11 2 11 2 5"></polygon>
   <path d="M13 5.5a5 5 0 0 1 0 5"></path>
@@ -50,6 +60,14 @@ let isSpeaking = false;
 let translationDirection = "auto";
 let currentSourceText = "";
 let activeTranslationRequest = 0;
+let currentTheme = "light";
+
+loadThemePreference();
+
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName !== "local" || !changes[THEME_STORAGE_KEY]) return;
+  setPopupTheme(changes[THEME_STORAGE_KEY].newValue);
+});
 
 // ── 1. Bôi đen chữ → hiện Popover ─────────────────────────
 document.addEventListener("mouseup", (e) => {
@@ -171,9 +189,20 @@ function showModal({ state, content, direction = translationDirection }) {
     headerLeft.appendChild(headerIcon);
     headerLeft.appendChild(title);
 
-    // Header Actions (Pin, Expand, Close)
+    // Header Actions (Theme, Pin, Expand, Close)
     const headerActions = document.createElement("div");
     headerActions.className = "gt-header-actions";
+
+    // Theme Button
+    const themeBtn = document.createElement("button");
+    themeBtn.type = "button";
+    themeBtn.className = "gt-tool-btn gt-theme-toggle";
+    themeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const nextTheme = currentTheme === "dark" ? "light" : "dark";
+      setPopupTheme(nextTheme);
+      saveThemePreference(nextTheme);
+    });
 
     // Pin Button
     const pinBtn = document.createElement("button");
@@ -208,6 +237,7 @@ function showModal({ state, content, direction = translationDirection }) {
     closeBtn.title = "Đóng (Esc)";
     closeBtn.addEventListener("click", () => closeModal(modal));
 
+    headerActions.appendChild(themeBtn);
     headerActions.appendChild(pinBtn);
     headerActions.appendChild(expandBtn);
     headerActions.appendChild(closeBtn);
@@ -232,6 +262,8 @@ function showModal({ state, content, direction = translationDirection }) {
     modal.appendChild(overlay);
     modal.appendChild(box);
     document.body.appendChild(modal);
+
+    applyThemeToModal(modal);
 
     // Kéo thả di chuyển Modal (Drag & Drop)
     makeDraggable(box, header);
@@ -309,6 +341,42 @@ function showModal({ state, content, direction = translationDirection }) {
   footer.style.display = "flex";
 
   modal.style.display = "flex";
+}
+
+function loadThemePreference() {
+  chrome.storage.local.get([THEME_STORAGE_KEY], (result) => {
+    if (chrome.runtime.lastError) return;
+    setPopupTheme(result[THEME_STORAGE_KEY]);
+  });
+}
+
+function saveThemePreference(theme) {
+  chrome.storage.local.set({ [THEME_STORAGE_KEY]: theme }, () => {
+    // Reading lastError prevents an unchecked runtime error if the extension
+    // is reloaded while this content script is still attached to the page.
+    void chrome.runtime.lastError;
+  });
+}
+
+function setPopupTheme(theme) {
+  currentTheme = theme === "dark" ? "dark" : "light";
+
+  const modal = document.getElementById(MODAL_ID);
+  if (modal) applyThemeToModal(modal);
+}
+
+function applyThemeToModal(modal) {
+  const isDark = currentTheme === "dark";
+  modal.dataset.theme = currentTheme;
+
+  const themeBtn = modal.querySelector(".gt-theme-toggle");
+  if (!themeBtn) return;
+
+  const label = isDark ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối";
+  themeBtn.innerHTML = isDark ? SUN_SVG : MOON_SVG;
+  themeBtn.title = label;
+  themeBtn.setAttribute("aria-label", "Giao diện tối");
+  themeBtn.setAttribute("aria-pressed", String(isDark));
 }
 
 function createDirectionControl(activeDirection) {

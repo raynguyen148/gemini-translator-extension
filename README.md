@@ -21,6 +21,7 @@
 | **Draggable Modal** | Click and drag the modal header to reposition it anywhere on the screen |
 | **Pin Mode** | Pin the translation popup to keep reading while interacting with the webpage underneath |
 | **Expandable Width** | Toggle between default (480px) and wide view (680px) for reading lengthy technical articles and PR descriptions |
+| **Persistent Theme** | Switch the in-page translation popup between Light and Dark themes; the selected theme is remembered across pages |
 | **Text-to-Speech (TTS)** | Listen to the Vietnamese pronunciation of the translated text via the Web Speech API |
 | **One-Click Copy** | Fast copy button with tactile visual feedback |
 | **Word Count** | Displays an estimated word count for translated text |
@@ -129,7 +130,7 @@ The extension includes automated fallback handling across current Gemini generat
 | Permission | Purpose |
 |---|---|
 | `contextMenus` | Adds the right-click "Dịch với Gemini" context option |
-| `storage` | Securely persists your API key and model selection locally |
+| `storage` | Securely persists your API key, model selection, and popup theme locally |
 | `activeTab` | Injects translation results into the currently active tab |
 | `scripting` | Executes UI components within web pages |
 
