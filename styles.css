@@ -386,6 +386,8 @@
 .gt-body em     { font-style: italic; }
 .gt-body del    { text-decoration: line-through; color: var(--gt-text-subtle); }
 
+.gt-empty-state { color: var(--gt-text-subtle); }
+
 .gt-spinner {
   width: 16px;
   height: 16px;
@@ -511,6 +513,119 @@
   pointer-events: none !important;
   opacity: 0 !important;
 }
+
+/* Standalone toolbar window uses the same translation box as selected text. */
+html[data-translator-window="detached"],
+html[data-translator-window="detached"] body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+html[data-translator-window="detached"] #gemini-translator-modal-container {
+  display: flex;
+  padding: 0;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+html[data-translator-window="detached"] .gt-overlay,
+html[data-translator-window="detached"] .gt-expand-btn {
+  display: none;
+}
+
+html[data-translator-window="detached"] .gt-box,
+html[data-translator-window="detached"] .gt-box.is-expanded {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  animation: none;
+}
+
+html[data-translator-window="detached"] .gt-header { cursor: default; }
+html[data-translator-window="detached"] .gt-header:active { cursor: default; }
+html[data-translator-window="detached"] .gt-body { font-size: var(--gt-reading-font-size, 13.5px); }
+html[data-translator-window="detached"] .gt-body h1 { font-size: calc(var(--gt-reading-font-size, 13.5px) + 2.5px); }
+html[data-translator-window="detached"] .gt-body h2 { font-size: calc(var(--gt-reading-font-size, 13.5px) + 1px); }
+html[data-translator-window="detached"] .gt-body h3 { font-size: var(--gt-reading-font-size, 13.5px); }
+
+.gt-font-controls { display: flex; align-items: center; gap: 3px; margin-right: 4px; }
+.gt-font-btn {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--gt-border);
+  border-radius: 5px;
+  background: var(--gt-surface);
+  color: var(--gt-text-muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.gt-font-btn:hover:not(:disabled) { background: var(--gt-control-hover); color: var(--gt-title); }
+.gt-font-btn:disabled { opacity: 0.45; cursor: default; }
+
+.gt-manual-panel {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--gt-divider);
+  color: var(--gt-text);
+}
+.gt-manual-heading,
+.gt-manual-actions,
+.gt-manual-submit { display: flex; align-items: center; gap: 7px; }
+.gt-manual-heading { justify-content: space-between; margin-bottom: 7px; }
+.gt-manual-heading label {
+  color: var(--gt-text-subtle);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.gt-manual-panel textarea {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-height: 92px;
+  max-height: 220px;
+  padding: 10px 12px;
+  resize: vertical;
+  border: 1px solid var(--gt-border);
+  border-radius: 7px;
+  outline: none;
+  background: var(--gt-surface);
+  color: var(--gt-text);
+  font-family: inherit;
+  font-size: var(--gt-reading-font-size, 13.5px);
+  line-height: 1.6;
+}
+.gt-manual-panel textarea:focus { border-color: var(--gt-accent); box-shadow: 0 0 0 3px var(--gt-accent-soft); }
+.gt-manual-panel textarea::placeholder { color: var(--gt-text-subtle); }
+.gt-manual-count { margin-top: 4px; text-align: right; font-size: 11px; color: var(--gt-text-subtle); }
+.gt-manual-submit { margin-top: 9px; }
+.gt-translate-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 7px;
+  background: #1a73e8;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.gt-translate-btn:hover:not(:disabled) { background: #1557b0; }
+.gt-translate-btn:disabled { opacity: 0.55; cursor: default; }
+.gt-manual-submit > .gt-action-btn { padding: 8px 13px; font-size: 13px; }
+.gt-manual-actions .gt-action-btn:disabled { opacity: 0.5; cursor: default; }
 
 /* ── Error State ── */
 .gt-body.is-error {

@@ -15,14 +15,14 @@
 |---|---|
 | **Highlight & Translate** | Select text on any webpage → click the floating action button → view instant translation; can be disabled in extension settings |
 | **Bidirectional (Auto-detect)** | Automatically detects if the input is English or Vietnamese and translates to the opposite language |
-| **Toolbar Popup** | Click the extension icon in the toolbar to paste/type text directly (ideal for Google Docs, Notion, or canvas-based apps) |
+| **Detached Translator Window** | Click the extension icon to open a movable window for pasted or typed text, using the same translation UI as selected text |
 | **Right-Click Menu** | Translate selections via the browser context menu (*Right click → "Dịch với Gemini"*) |
 | **Translate Page in Place** | Right-click a page → **Dịch trang này sang tiếng Việt với Gemini** to replace its text while retaining the page layout; switch between the original and translated text |
 | **Markdown Rendering** | Native, zero-dependency Markdown parser that renders headings, lists, code blocks, bold/italics, and blockquotes |
-| **Draggable Modal** | Click and drag the modal header to reposition it anywhere on the screen |
-| **Pin Mode** | Pin the translation popup to keep reading while interacting with the webpage underneath |
+| **Movable Translator** | Drag the selected-text modal within the webpage, or move the detached window around the desktop using its title bar |
+| **Pin Mode** | Keep the selected-text modal open when clicking the webpage, or keep the detached window open after switching focus |
 | **Expandable Width** | Toggle between default (480px) and wide view (680px) for reading lengthy technical articles and PR descriptions |
-| **Persistent Theme** | Switch the in-page translation popup between Light and Dark themes; the selected theme is remembered across pages |
+| **Persistent Theme** | Switch the translation UI between Light and Dark themes; the selected theme is remembered across pages and windows |
 | **Text-to-Speech (TTS)** | Listen to the Vietnamese pronunciation of the translated text via the Web Speech API |
 | **One-Click Copy** | Fast copy button with tactile visual feedback |
 | **Word Count** | Displays an estimated word count for translated text |
@@ -62,12 +62,12 @@ git clone https://github.com/YOUR_USERNAME/gemini-translator-extension.git
 
 ### 4. Configure Extension Settings
 
-1. Click the extension icon in your Chrome toolbar → click the **Settings (⚙)** button in the top right (or open extension options directly).
+1. Click the extension icon in your Chrome toolbar → click the **Settings (⚙)** button in the detached window (or open extension options directly).
 2. Paste your API Key into the **Gemini API Key** field.
 3. Select your preferred model (default: `gemini-3.8-flash`).
 4. Click **Save Settings**.
 
-The **Dịch văn bản được chọn** setting is on by default. Turn it off to hide the selection icon and selected-text right-click menu while keeping page translation and the toolbar popup available. Changes apply to open pages after saving.
+The **Dịch văn bản được chọn** setting is on by default. Turn it off to hide the selection icon and selected-text right-click menu while keeping page translation and the detached window available. Changes apply to open pages after saving.
 
 ---
 
@@ -78,10 +78,10 @@ The **Dịch văn bản được chọn** setting is on by default. Turn it off 
 2. Click the floating translation icon that appears near your cursor.
 3. The translation modal will open in the bottom-right corner.
 
-### Method 2: Toolbar Popup (Recommended for Google Docs / Web Apps)
+### Method 2: Detached Window (Recommended for Google Docs / Web Apps)
 1. Click the Gemini Translator icon in the Chrome toolbar.
-2. Paste or type text into the input box.
-3. Press **`Cmd + Enter`** (Mac) or **`Ctrl + Enter`** (Windows/Linux), or click **Translate**.
+2. Move the window by its title bar. Use **Pin** to keep it open when switching to another window; **Unpin** closes it when focus leaves.
+3. Paste or type text into the input box, then press **`Cmd + Enter`** (Mac) or **`Ctrl + Enter`** (Windows/Linux), or click **Translate**.
 
 ### Method 3: Context Menu
 1. Highlight text anywhere on the page.
@@ -97,8 +97,10 @@ The extension skips code blocks, form inputs, editable content, and its own UI. 
 
 | Shortcut | Action |
 |---|---|
-| `Cmd + Enter` / `Ctrl + Enter` | Translate input in toolbar popup |
+| `Cmd + Enter` / `Ctrl + Enter` | Translate input in detached window |
 | `Esc` | Close translation modal |
+
+The detached window has Copy and Paste controls for the input, a Copy control for the translation, and A− / A+ controls that remember the text size. Chrome does not provide an always-on-top switch for extension windows, so Pin keeps the window open but does not place it above other apps.
 
 ---
 
@@ -110,8 +112,8 @@ gemini-translator-extension/
 ├── background.js      # Background service worker (API dispatch & fallback logic)
 ├── content.js         # Content script (in-page popup, modal, drag & drop, TTS, Markdown parser)
 ├── page-translation.js # In-place page translation and original/translated controls
-├── popup.html         # Toolbar quick-translation popup interface
-├── popup.js           # Logic and interactions for toolbar popup
+├── detached.html      # Standalone translator window
+├── detached.js        # Manual input and window interactions
 ├── options.html       # Extension configuration page
 ├── options.js         # Settings management with chrome.storage.local
 ├── styles.css         # Complete stylesheet for in-page overlays and components
@@ -140,7 +142,8 @@ The extension includes automated fallback handling across current Gemini generat
 | Permission | Purpose |
 |---|---|
 | `contextMenus` | Adds the right-click "Dịch với Gemini" context option |
-| `storage` | Securely persists your API key, model selection, and popup theme locally |
+| `clipboardRead` | Reads text from the clipboard when you click Paste in the detached window |
+| `storage` | Persists your API key, model selection, popup theme, and translator text size locally |
 | `activeTab` | Injects translation results into the currently active tab |
 | `scripting` | Executes UI components within web pages |
 | Gemini API host access | Allows the background worker to call `generativelanguage.googleapis.com` |

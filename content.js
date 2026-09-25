@@ -4,6 +4,7 @@ const MODAL_ID   = "gemini-translator-modal-container";
 const PAGE_CONTROL_ID = "gemini-translator-page-controls";
 const THEME_STORAGE_KEY = "translationPopupTheme";
 const SELECTION_STORAGE_KEY = "selectionTranslationEnabled";
+const IS_DETACHED_WINDOW = document.documentElement.dataset.translatorWindow === "detached";
 
 // Inline SVG icons
 const POPOVER_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -83,7 +84,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 
 function setSelectionTranslationEnabled(enabled) {
   selectionTranslationEnabled = enabled;
-  if (enabled) return;
+  if (enabled || IS_DETACHED_WINDOW) return;
   selectedText = "";
   ++activeTranslationRequest;
   hidePopover();
@@ -93,6 +94,7 @@ function setSelectionTranslationEnabled(enabled) {
 
 // ── 1. Bôi đen chữ → hiện Popover ─────────────────────────
 document.addEventListener("mouseup", (e) => {
+  if (IS_DETACHED_WINDOW) return;
   setTimeout(() => {
     if (!selectionTranslationEnabled) return;
     const selection = window.getSelection();
@@ -118,7 +120,7 @@ document.addEventListener("mousedown", (e) => {
 
 // ── 2. Popover Button ──────────────────────────────────────
 function showPopover(x, y) {
-  if (!selectionTranslationEnabled) return;
+  if (!selectionTranslationEnabled || IS_DETACHED_WINDOW) return;
   let btn = document.getElementById(POPOVER_ID);
   if (!btn) {
     btn = document.createElement("button");
@@ -152,11 +154,12 @@ chrome.runtime.onMessage.addListener((request) => {
 
 // ── 4. Luồng dịch chính ────────────────────────────────────
 async function processTranslation(text, direction = "auto") {
-  if (!selectionTranslationEnabled) return;
+  if (!selectionTranslationEnabled && !IS_DETACHED_WINDOW) return;
   currentSourceText = text;
   translationDirection = direction;
   const requestId = ++activeTranslationRequest;
   showModal({ state: "loading", direction });
+  if (IS_DETACHED_WINDOW) window.dispatchEvent(new Event("gt-translation-start"));
 
   try {
     const response = await chrome.runtime.sendMessage({ action: "TRANSLATE", text, direction });
@@ -174,6 +177,10 @@ async function processTranslation(text, direction = "auto") {
   } catch (error) {
     if (requestId !== activeTranslationRequest) return;
     showModal({ state: "error", content: `Đã xảy ra lỗi: ${error.message}`, direction });
+  } finally {
+    if (IS_DETACHED_WINDOW && requestId === activeTranslationRequest) {
+      window.dispatchEvent(new Event("gt-translation-settled"));
+    }
   }
 }
 
@@ -199,7 +206,7 @@ function showModal({ state, content, direction = translationDirection }) {
     // Header
     const header = document.createElement("div");
     header.className = "gt-header";
-    header.title = "Kéo để di chuyển vị trí";
+    if (!IS_DETACHED_WINDOW) header.title = "Kéo để di chuyển vị trí";
 
     const headerLeft = document.createElement("div");
     headerLeft.className = "gt-header-left";
@@ -233,19 +240,27 @@ function showModal({ state, content, direction = translationDirection }) {
     const pinBtn = document.createElement("button");
     pinBtn.className = "gt-tool-btn";
     pinBtn.innerHTML = PIN_SVG;
-    pinBtn.title = "Ghim (không tắt khi bấm ra ngoài)";
+    pinBtn.title = IS_DETACHED_WINDOW
+      ? "Ghim (giữ cửa sổ khi chuyển focus)"
+      : "Ghim (không tắt khi bấm ra ngoài)";
+    pinBtn.setAttribute("aria-label", "Ghim popup");
+    pinBtn.setAttribute("aria-pressed", "false");
     pinBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       isPinned = !isPinned;
       box.classList.toggle("is-pinned", isPinned);
       overlay.classList.toggle("is-pinned-overlay", isPinned);
       pinBtn.classList.toggle("active", isPinned);
-      pinBtn.title = isPinned ? "Bỏ ghim" : "Ghim (không tắt khi bấm ra ngoài)";
+      pinBtn.title = isPinned ? "Bỏ ghim" : (IS_DETACHED_WINDOW
+        ? "Ghim (giữ cửa sổ khi chuyển focus)"
+        : "Ghim (không tắt khi bấm ra ngoài)");
+      pinBtn.setAttribute("aria-label", isPinned ? "Bỏ ghim popup" : "Ghim popup");
+      pinBtn.setAttribute("aria-pressed", String(isPinned));
     });
 
     // Expand Button
     const expandBtn = document.createElement("button");
-    expandBtn.className = "gt-tool-btn";
+    expandBtn.className = "gt-tool-btn gt-expand-btn";
     expandBtn.innerHTML = EXPAND_SVG;
     expandBtn.title = "Mở rộng chiều rộng";
     expandBtn.addEventListener("click", (e) => {
@@ -291,7 +306,7 @@ function showModal({ state, content, direction = translationDirection }) {
     applyThemeToModal(modal);
 
     // Kéo thả di chuyển Modal (Drag & Drop)
-    makeDraggable(box, header);
+    if (!IS_DETACHED_WINDOW) makeDraggable(box, header);
 
     // Phím tắt Escape
     document.addEventListener("keydown", (e) => {
@@ -316,7 +331,9 @@ function showModal({ state, content, direction = translationDirection }) {
   const footerRight = document.createElement("div");
   footerRight.className = "gt-footer-right";
 
-  if (state === "loading") {
+  if (state === "idle") {
+    body.innerHTML = `<div class="gt-empty-state">Nhập hoặc dán văn bản để dịch.</div>`;
+  } else if (state === "loading") {
     body.innerHTML = `<div class="gt-loading"><div class="gt-spinner"></div>Đang dịch với Gemini...</div>`;
   } else if (state === "error") {
     body.classList.add("is-error");
@@ -436,7 +453,17 @@ function setTranslationDirection(direction) {
 
   if (currentSourceText) {
     processTranslation(currentSourceText, direction);
+  } else if (IS_DETACHED_WINDOW) {
+    showModal({ state: "idle", direction });
   }
+}
+
+function resetDetachedTranslation() {
+  if (!IS_DETACHED_WINDOW) return;
+  ++activeTranslationRequest;
+  currentSourceText = "";
+  translationDirection = "auto";
+  showModal({ state: "idle", direction: "auto" });
 }
 
 function getDirectionLabel(direction) {
@@ -539,6 +566,10 @@ function stopSpeech() {
 
 function closeModal(modal) {
   stopSpeech();
+  if (IS_DETACHED_WINDOW) {
+    chrome.windows.getCurrent().then(({ id }) => chrome.windows.remove(id));
+    return;
+  }
   modal.style.display = "none";
 }
 

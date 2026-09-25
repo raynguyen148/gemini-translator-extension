@@ -5,6 +5,7 @@
   "description": "Dịch thuật Anh - Việt thông minh, sử dụng Gemini API với tốc độ cực nhanh.",
   "permissions": [
     "contextMenus",
+    "clipboardRead",
     "storage",
     "activeTab",
     "scripting"
@@ -26,7 +27,6 @@
   },
   "action": {
     "default_title": "Gemini Translator",
-    "default_popup": "popup.html",
     "default_icon": {
       "16": "icon16.png",
       "32": "icon32.png",

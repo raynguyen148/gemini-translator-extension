@@ -1,5 +1,42 @@
 // Giữ menu dịch trang độc lập với tùy chọn dịch đoạn văn được chọn.
 let menuSync = Promise.resolve();
+let openingDetachedWindow = null;
+
+async function openDetachedWindow() {
+    const { detachedWindowId } = await chrome.storage.session.get("detachedWindowId");
+    if (typeof detachedWindowId === "number") {
+        try {
+            const existingWindow = await chrome.windows.get(detachedWindowId);
+            if (existingWindow.type === "popup") {
+                await chrome.windows.update(detachedWindowId, { focused: true });
+                return;
+            }
+        } catch {
+            // The user may have closed the previous window while the worker was idle.
+        }
+    }
+
+    const window = await chrome.windows.create({
+        url: chrome.runtime.getURL("detached.html"),
+        type: "popup",
+        width: 540,
+        height: 640,
+        focused: true
+    });
+    if (window?.id) await chrome.storage.session.set({ detachedWindowId: window.id });
+}
+
+chrome.action.onClicked.addListener(() => {
+    if (openingDetachedWindow) return;
+    openingDetachedWindow = openDetachedWindow()
+        .catch((error) => console.error("Không thể mở cửa sổ dịch:", error))
+        .finally(() => { openingDetachedWindow = null; });
+});
+
+chrome.windows.onRemoved.addListener(async (windowId) => {
+    const { detachedWindowId } = await chrome.storage.session.get("detachedWindowId");
+    if (windowId === detachedWindowId) await chrome.storage.session.remove("detachedWindowId");
+});
 
 function createContextMenu(properties) {
     return new Promise((resolve, reject) => {
