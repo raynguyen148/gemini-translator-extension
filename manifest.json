@@ -9,6 +9,7 @@
     "activeTab",
     "scripting"
   ],
+  "host_permissions": ["https://generativelanguage.googleapis.com/*"],
   "background": {
     "service_worker": "background.js"
   },
@@ -16,7 +17,7 @@
     {
       "matches": ["<all_urls>"],
       "css": ["styles.css"],
-      "js": ["content.js"]
+      "js": ["content.js", "page-translation.js"]
     }
   ],
   "options_ui": {

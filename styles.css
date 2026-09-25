@@ -33,7 +33,7 @@
 }
 
 /* ── Modal Container ── */
-#gemini-translator-modal-container {
+:is(#gemini-translator-modal-container, #gemini-translator-page-controls) {
   --gt-accent: #1a73e8;
   --gt-accent-soft: #e8f0fe;
   --gt-accent-soft-hover: #eef4ff;
@@ -79,7 +79,7 @@
   pointer-events: none;
 }
 
-#gemini-translator-modal-container[data-theme="dark"] {
+:is(#gemini-translator-modal-container, #gemini-translator-page-controls)[data-theme="dark"] {
   --gt-accent: #8ab4f8;
   --gt-accent-soft: #253b5c;
   --gt-accent-soft-hover: #263d60;
@@ -115,6 +115,48 @@
   --gt-pinned-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.4),
     0 20px 44px -6px rgba(0, 0, 0, 0.6),
     0 0 0 2px var(--gt-accent);
+}
+
+/* The page control uses the same popup shell without blocking the webpage. */
+#gemini-translator-page-controls {
+  inset: auto 24px 24px auto;
+  z-index: 2147483645;
+  display: flex;
+  padding: 0;
+}
+
+#gemini-translator-page-controls .gt-page-body {
+  flex: 0 1 auto;
+  min-height: 0;
+}
+
+#gemini-translator-page-controls .gt-page-heading {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gt-text);
+}
+
+#gemini-translator-page-controls .gt-page-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--gt-text-muted);
+  overflow-wrap: anywhere;
+}
+
+#gemini-translator-page-controls .gt-page-body.is-error .gt-page-progress {
+  color: var(--gt-danger);
+}
+
+#gemini-translator-page-controls [hidden] {
+  display: none !important;
+}
+
+#gemini-translator-page-controls .gt-footer-right {
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 /* ── Overlay (tap outside to close) ── */

@@ -17,6 +17,7 @@
 | **Bidirectional (Auto-detect)** | Automatically detects if the input is English or Vietnamese and translates to the opposite language |
 | **Toolbar Popup** | Click the extension icon in the toolbar to paste/type text directly (ideal for Google Docs, Notion, or canvas-based apps) |
 | **Right-Click Menu** | Translate selections via the browser context menu (*Right click → "Dịch với Gemini"*) |
+| **Translate Page in Place** | Right-click a page → **Dịch trang này sang tiếng Việt với Gemini** to replace its text while retaining the page layout; switch between the original and translated text |
 | **Markdown Rendering** | Native, zero-dependency Markdown parser that renders headings, lists, code blocks, bold/italics, and blockquotes |
 | **Draggable Modal** | Click and drag the modal header to reposition it anywhere on the screen |
 | **Pin Mode** | Pin the translation popup to keep reading while interacting with the webpage underneath |
@@ -84,6 +85,12 @@ git clone https://github.com/YOUR_USERNAME/gemini-translator-extension.git
 1. Highlight text anywhere on the page.
 2. Right-click and choose **Dịch với Gemini**.
 
+### Method 4: Translate the Current Page
+1. Right-click anywhere on a regular webpage and choose **Dịch trang này sang tiếng Việt với Gemini**.
+2. The extension translates text in batches and replaces it directly on the page. The floating popup shares the selected-text popup's theme and layout. Use **Xem bản gốc / Xem bản dịch** to switch views, **Dừng dịch** to stop further batches, or close the popup to restore the original page.
+
+The extension skips code blocks, form inputs, editable content, and its own UI. It also translates new DOM text added while the translated view is active. Text drawn in a canvas, closed shadow roots, and inaccessible frames cannot be replaced. Long pages may need several Gemini requests and can hit API rate limits.
+
 ### Keyboard Shortcuts
 
 | Shortcut | Action |
@@ -100,6 +107,7 @@ gemini-translator-extension/
 ├── manifest.json      # Extension configuration (Manifest V3)
 ├── background.js      # Background service worker (API dispatch & fallback logic)
 ├── content.js         # Content script (in-page popup, modal, drag & drop, TTS, Markdown parser)
+├── page-translation.js # In-place page translation and original/translated controls
 ├── popup.html         # Toolbar quick-translation popup interface
 ├── popup.js           # Logic and interactions for toolbar popup
 ├── options.html       # Extension configuration page
@@ -133,8 +141,9 @@ The extension includes automated fallback handling across current Gemini generat
 | `storage` | Securely persists your API key, model selection, and popup theme locally |
 | `activeTab` | Injects translation results into the currently active tab |
 | `scripting` | Executes UI components within web pages |
+| Gemini API host access | Allows the background worker to call `generativelanguage.googleapis.com` |
 
-> **Privacy Notice:** This extension operates entirely client-side. Your text and API key are transmitted directly to the official Google Gemini API and are never routed through any third-party intermediate servers.
+> **Privacy Notice:** This extension operates entirely client-side. Selected text, or the page text when you choose page translation, and your API key are transmitted directly to the official Google Gemini API and are never routed through any third-party intermediate servers.
 
 ---
 

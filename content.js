@@ -1,6 +1,7 @@
 // ── Constants ──────────────────────────────────────────────
 const POPOVER_ID = "gemini-translator-popover-btn";
 const MODAL_ID   = "gemini-translator-modal-container";
+const PAGE_CONTROL_ID = "gemini-translator-page-controls";
 const THEME_STORAGE_KEY = "translationPopupTheme";
 
 // Inline SVG icons
@@ -75,7 +76,7 @@ document.addEventListener("mouseup", (e) => {
     const selection = window.getSelection();
     const text = selection.toString().trim();
 
-    if (e.target.closest(`#${MODAL_ID}`) || e.target.closest(`#${POPOVER_ID}`)) return;
+    if (e.target.closest(`#${MODAL_ID}, #${POPOVER_ID}, #${PAGE_CONTROL_ID}`)) return;
 
     if (text.length > 0) {
       selectedText = text;
@@ -88,7 +89,7 @@ document.addEventListener("mouseup", (e) => {
 
 // Ẩn popover khi click ra ngoài
 document.addEventListener("mousedown", (e) => {
-  if (!e.target.closest(`#${POPOVER_ID}`) && !e.target.closest(`#${MODAL_ID}`)) {
+  if (!e.target.closest(`#${POPOVER_ID}, #${MODAL_ID}, #${PAGE_CONTROL_ID}`)) {
     hidePopover();
   }
 });
