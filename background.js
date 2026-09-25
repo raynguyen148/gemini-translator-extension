@@ -1,17 +1,38 @@
-// Khởi tạo Context Menu (chuột phải) khi cài đặt extension
-chrome.runtime.onInstalled.addListener(() => {
-    chrome.contextMenus.removeAll(() => {
-        chrome.contextMenus.create({
-            id: "translate_with_gemini",
-            title: "Dịch với Gemini",
-            contexts: ["selection"]
+// Giữ menu dịch trang độc lập với tùy chọn dịch đoạn văn được chọn.
+let menuSync = Promise.resolve();
+
+function createContextMenu(properties) {
+    return new Promise((resolve, reject) => {
+        chrome.contextMenus.create(properties, () => {
+            const error = chrome.runtime.lastError;
+            if (error) reject(new Error(error.message));
+            else resolve();
         });
-        chrome.contextMenus.create({
+    });
+}
+
+function syncContextMenus() {
+    menuSync = menuSync.then(async () => {
+        const { selectionTranslationEnabled } = await chrome.storage.local.get(["selectionTranslationEnabled"]);
+        await chrome.contextMenus.removeAll();
+        if (selectionTranslationEnabled !== false) {
+            await createContextMenu({
+                id: "translate_with_gemini",
+                title: "Dịch với Gemini",
+                contexts: ["selection"]
+            });
+        }
+        await createContextMenu({
             id: "translate_page_with_gemini",
             title: "Dịch trang này sang tiếng Việt với Gemini",
             contexts: ["page", "selection", "link", "editable", "image", "video", "audio", "frame"]
         });
-    });
+    }).catch((error) => console.error("Không thể cập nhật menu dịch:", error));
+}
+
+chrome.runtime.onInstalled.addListener(syncContextMenus);
+chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName === "local" && changes.selectionTranslationEnabled) syncContextMenus();
 });
 
 // Lắng nghe sự kiện click từ Context Menu

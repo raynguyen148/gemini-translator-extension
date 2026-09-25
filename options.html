@@ -122,6 +122,29 @@
       color: #3c4043;
     }
 
+    .toggle-field {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .toggle-field input {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      accent-color: #1a73e8;
+      flex-shrink: 0;
+    }
+
+    .toggle-field strong {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    .toggle-field .hint { display: block; }
+
     /* Divider */
     .divider {
       height: 1px;
@@ -179,7 +202,7 @@
       <img src="icon48.png" alt="Logo" style="width: 36px; height: 36px; object-fit: contain;">
       <div>
         <h1>Gemini Translator</h1>
-        <p>Cấu hình API và model dịch thuật</p>
+        <p>Cấu hình tính năng dịch và Gemini API</p>
       </div>
     </div>
 
@@ -200,6 +223,16 @@
           <em>Lưu ý:</em> Extension đã tích hợp sẵn cơ chế dự phòng (fallback). Nếu model bị giới hạn (Rate limit), hệ thống sẽ <strong>tự động chuyển qua</strong> các model dự phòng khác (như <code>gemini-3.8-flash</code>) để đảm bảo bản dịch không bị gián đoạn.
         </p>
       </div>
+
+      <div class="divider"></div>
+
+      <label class="toggle-field" for="selectionTranslationEnabled">
+        <input type="checkbox" id="selectionTranslationEnabled" checked>
+        <span>
+          <strong>Dịch văn bản được chọn</strong>
+          <span class="hint">Hiện icon khi bôi đen và mục dịch đoạn văn trong menu chuột phải. Tắt để chỉ dùng dịch trang hoặc ô dịch trên toolbar.</span>
+        </span>
+      </label>
     </div>
 
     <div class="card-footer">

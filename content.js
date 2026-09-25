@@ -3,6 +3,7 @@ const POPOVER_ID = "gemini-translator-popover-btn";
 const MODAL_ID   = "gemini-translator-modal-container";
 const PAGE_CONTROL_ID = "gemini-translator-page-controls";
 const THEME_STORAGE_KEY = "translationPopupTheme";
+const SELECTION_STORAGE_KEY = "selectionTranslationEnabled";
 
 // Inline SVG icons
 const POPOVER_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -62,17 +63,38 @@ let translationDirection = "auto";
 let currentSourceText = "";
 let activeTranslationRequest = 0;
 let currentTheme = "light";
+let selectionTranslationEnabled = false;
+let selectionPreferenceUpdated = false;
 
 loadThemePreference();
+chrome.storage.local.get([SELECTION_STORAGE_KEY], (result) => {
+  if (chrome.runtime.lastError || selectionPreferenceUpdated) return;
+  setSelectionTranslationEnabled(result[SELECTION_STORAGE_KEY] !== false);
+});
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName !== "local" || !changes[THEME_STORAGE_KEY]) return;
-  setPopupTheme(changes[THEME_STORAGE_KEY].newValue);
+  if (areaName !== "local") return;
+  if (changes[THEME_STORAGE_KEY]) setPopupTheme(changes[THEME_STORAGE_KEY].newValue);
+  if (changes[SELECTION_STORAGE_KEY]) {
+    selectionPreferenceUpdated = true;
+    setSelectionTranslationEnabled(changes[SELECTION_STORAGE_KEY].newValue !== false);
+  }
 });
+
+function setSelectionTranslationEnabled(enabled) {
+  selectionTranslationEnabled = enabled;
+  if (enabled) return;
+  selectedText = "";
+  ++activeTranslationRequest;
+  hidePopover();
+  const modal = document.getElementById(MODAL_ID);
+  if (modal) closeModal(modal);
+}
 
 // ── 1. Bôi đen chữ → hiện Popover ─────────────────────────
 document.addEventListener("mouseup", (e) => {
   setTimeout(() => {
+    if (!selectionTranslationEnabled) return;
     const selection = window.getSelection();
     const text = selection.toString().trim();
 
@@ -96,6 +118,7 @@ document.addEventListener("mousedown", (e) => {
 
 // ── 2. Popover Button ──────────────────────────────────────
 function showPopover(x, y) {
+  if (!selectionTranslationEnabled) return;
   let btn = document.getElementById(POPOVER_ID);
   if (!btn) {
     btn = document.createElement("button");
@@ -121,7 +144,7 @@ function hidePopover() {
 
 // ── 3. Nhận lệnh từ Context Menu (chuột phải) ─────────────
 chrome.runtime.onMessage.addListener((request) => {
-  if (request.action === "TRIGGER_TRANSLATE") {
+  if (request.action === "TRIGGER_TRANSLATE" && selectionTranslationEnabled) {
     hidePopover();
     processTranslation(request.text, "auto");
   }
@@ -129,6 +152,7 @@ chrome.runtime.onMessage.addListener((request) => {
 
 // ── 4. Luồng dịch chính ────────────────────────────────────
 async function processTranslation(text, direction = "auto") {
+  if (!selectionTranslationEnabled) return;
   currentSourceText = text;
   translationDirection = direction;
   const requestId = ++activeTranslationRequest;

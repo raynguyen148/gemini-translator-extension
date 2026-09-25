@@ -13,7 +13,7 @@
 
 | Feature | Description |
 |---|---|
-| **Highlight & Translate** | Select text on any webpage → click the floating action button → view instant translation |
+| **Highlight & Translate** | Select text on any webpage → click the floating action button → view instant translation; can be disabled in extension settings |
 | **Bidirectional (Auto-detect)** | Automatically detects if the input is English or Vietnamese and translates to the opposite language |
 | **Toolbar Popup** | Click the extension icon in the toolbar to paste/type text directly (ideal for Google Docs, Notion, or canvas-based apps) |
 | **Right-Click Menu** | Translate selections via the browser context menu (*Right click → "Dịch với Gemini"*) |
@@ -66,6 +66,8 @@ git clone https://github.com/YOUR_USERNAME/gemini-translator-extension.git
 2. Paste your API Key into the **Gemini API Key** field.
 3. Select your preferred model (default: `gemini-3.8-flash`).
 4. Click **Save Settings**.
+
+The **Dịch văn bản được chọn** setting is on by default. Turn it off to hide the selection icon and selected-text right-click menu while keeping page translation and the toolbar popup available. Changes apply to open pages after saving.
 
 ---
 
